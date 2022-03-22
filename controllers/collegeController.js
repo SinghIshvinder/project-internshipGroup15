@@ -1,4 +1,5 @@
 const collegeModel = require("../models/collegeModel");
+const internModel = require('../models/internModel')
 const validator = require("../utils/validator");
 
 const createCollege = async (req, res) => {
@@ -35,15 +36,43 @@ const createCollege = async (req, res) => {
 };
 
 const getCollegeDetails = async (req,res)=>{
-    
-//     //const {collegename: name} = req.query
-//     const data = await collegeModel.find().populate('interns').exec();
-//    // console.log();
-//     res.status(200).json({status:true, msg:data})
+  try {
+    let collegeName = req.query.collegeName;
 
+    if(!collegeName){
+      return res.status(400).json({status:false, msg:`Query params must be present!`});
+    }
+    const collegeInfo = await collegeModel.findOne({name: collegeName, isDeleted:false});
+    if(!collegeInfo){
+      return res.status(400).json({status:false, msg:`Nothing found with given College Name. Try again using College Abbreveation.`});
+    }
+    const { name, fullName, logoLink} = collegeInfo;
+
+    const collegeId = collegeInfo._id;
+    const interns = await internModel.find({collegeId:collegeId, isDeleted:false}).select({_id:1,name:1,email:1,mobile:1});
+    
+
+    const data = {name, fullName, logoLink, interns};
+    res.status(200).json({status:true, msg:data, count:interns.length});
+
+
+  } catch (error) {
+    res.status(500).json({ status: false, error: error.message });
+  }
 }
+    
+
+
 
 module.exports = {
   createCollege,
   getCollegeDetails
 };
+
+
+
+
+
+
+
+
