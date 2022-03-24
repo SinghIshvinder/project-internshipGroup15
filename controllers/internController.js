@@ -10,26 +10,38 @@ const createIntern = async (req, res)=>{
         }
         let {name, email, mobile, collegeId } = requestBody;
 
+        if(!requestBody.name){
+            return res.status(400).json({status:false, msg:`name is mandatory!`})
+         }
         if(!validator.isValidString(name)){
             return res.status(400).json({status:false, msg:`name is mandatory field!`})
         }
+        if(!requestBody.email){
+            return res.status(400).json({status:false, msg:`email is mandatory!`})
+         }
         if(!validator.isValidString(email)){
             return res.status(400).json({status:false, msg:`email is mandatory field!`})
         }
         if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
             return res.status(400).json({status:false, msg:`Invalid email address!`})
         }
+        if(!requestBody.mobile){
+            return res.status(400).json({status:false, msg:`mobile is mandatory!`})
+         }
         if(validator.isValid(mobile)){
             return res.status(400).json({status:false, msg:`mobile number is mandatory field!`})
         }
         if(!/^[6-9]\d{9}$/.test(mobile)){
             return res.status(400).json({status:false, msg:`Invalid Mobile Number!`});
         }
+        if(!requestBody.collegeId){
+            return res.status(400).json({status:false, msg:`collegeID is mandatory!`})
+         }
         if(!validator.isValidString(collegeId)){
             return res.status(400).json({status:false, msg:`college ID is mandatory field!`})
         }
         if(!validator.isValidObjectId(collegeId)){
-            return res.status(400).json({status:false, msg:`${collegeId} is not valid !`})
+            return res.status(400).json({status:false, msg:`${collegeId} is not valid College ID!`})
         }
         const findCollege = await collegeModel.findById(collegeId);
         if(!findCollege){
